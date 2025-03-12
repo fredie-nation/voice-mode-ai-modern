@@ -8,7 +8,7 @@ canvas.height = window.innerHeight;
 // API Configuration
 const GEMINI_API_KEY = 'AIzaSyCNE9ozVDWRMbbFCFuKsJY9W696T_nnOUw';
 const ELEVENLABS_API_KEYS = [
-    'sk_544c7917afd57a16e66686cbb7db12a64561ad20b49bab93',
+    'sk_54c7b718a54814fdc3af3377104c8db3ae2fee51794655fd',
     'sk_b67cf70e047cfac2b1a362717683fe6b0d2bb0167cd88465',
     'sk_b531ae3b5e61a7979200d5bccf9067a4b061005ecde5ad8c',
     'sk_9e63a1dfbf7a87e54ebbc7b7f21b5b3b1902067b9446e64e',
@@ -22,7 +22,7 @@ const ELEVENLABS_API_KEYS = [
     'sk_d9eaebe8b7d075554f1376681bd413030bedacae2993e59c',
     'sk_16b7e33f2beeb8875a1b21dbfbf818d4e00ac99895b08b8e',
     'sk_92322e535c237df3f7e4aa8a65a6ca5a7ded230826f9512d',
-    'sk_54c7b718a54814fdc3af3377104c8db3ae2fee51794655fd'
+    'sk_544c7917afd57a16e66686cbb7db12a64561ad20b49bab93'
 ];
 const VOICE_ID = 'TxGEqnHWrfWFTfGW9XjX';
 
