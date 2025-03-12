@@ -220,7 +220,7 @@ async function playElevenLabsSpeech(text) {
     for (let i = 0; i < ELEVENLABS_API_KEYS.length; i++) {
         try {
             console.log(`Trying ElevenLabs API key ${i+1}...`);
-            document.getElementById('status').textContent = `Processing speech... (API ${i+1})`;
+            document.getElementById('status').textContent = `Processing speech... (Server ${i+1})`;
             
             const response = await fetch(
                 `https://api.elevenlabs.io/v1/text-to-speech/${VOICE_ID}`,
