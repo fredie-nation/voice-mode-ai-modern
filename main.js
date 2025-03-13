@@ -6,7 +6,7 @@ canvas.width = window.innerWidth;
 canvas.height = window.innerHeight;
 
 // API Configuration
-const GEMINI_API_KEY = 'AIzaSyCNE9ozVDWRMbbFCFuKsJY9W696T_nnOUw';
+const GEMINI_API_KEY = 'AIzaSyA-JDhI67yDNVolV0YbM9xKgKh9Bepd9F8';
 const ELEVENLABS_API_KEYS = [
     'sk_54c7b718a54814fdc3af3377104c8db3ae2fee51794655fd',
     'sk_b67cf70e047cfac2b1a362717683fe6b0d2bb0167cd88465',
