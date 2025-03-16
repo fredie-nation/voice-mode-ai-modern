@@ -9,7 +9,7 @@ canvas.height = window.innerHeight;
 const GEMINI_API_KEY = 'AIzaSyA-JDhI67yDNVolV0YbM9xKgKh9Bepd9F8';
 const ELEVENLABS_API_KEYS = [
     'sk_54c7b718a54814fdc3af3377104c8db3ae2fee51794655fd',
-    'sk_b67cf70e047cfac2b1a362717683fe6b0d2bb0167cd88465',
+    'sk_e5d6b834551a1f3651a62226b4eff992def7971ae06d9347',
     'sk_b531ae3b5e61a7979200d5bccf9067a4b061005ecde5ad8c',
     'sk_9e63a1dfbf7a87e54ebbc7b7f21b5b3b1902067b9446e64e',
     'sk_81391143ef540065a6955073040980d44fef743ef8be1c34',
