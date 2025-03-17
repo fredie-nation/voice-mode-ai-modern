@@ -25,7 +25,7 @@ const ELEVENLABS_API_KEYS = [
     'sk_544c7917afd57a16e66686cbb7db12a64561ad20b49bab93'
 ];
 // const VOICE_ID = 'TxGEqnHWrfWFTfGW9XjX';
-const VOICE_ID = 'XB0fDUnXU5powFXDhCwa';
+const VOICE_ID = 'EXAVITQu4vr4xnSDxMaL';
 
 // Eye Animation State
 let isAISpeaking = false;
