@@ -22,7 +22,16 @@ const ELEVENLABS_API_KEYS = [
     'sk_d9eaebe8b7d075554f1376681bd413030bedacae2993e59c',
     'sk_16b7e33f2beeb8875a1b21dbfbf818d4e00ac99895b08b8e',
     'sk_92322e535c237df3f7e4aa8a65a6ca5a7ded230826f9512d',
-    'sk_544c7917afd57a16e66686cbb7db12a64561ad20b49bab93'
+    'sk_544c7917afd57a16e66686cbb7db12a64561ad20b49bab93',
+    'sk_00755348bdace1c4007c84e98f4e7384e4374d1d2839d3cc',
+    'sk_ed9253baf4138a234b388e9b0a764be115083671ca427e92',
+    'sk_e9d5ba0edaee834844db9d738f50cdd2924b4d9e231906f9',
+    'sk_88fb2d8f8849002f41bca63b75c05e091af3bb09e406e51d',
+    'sk_dc0d7ce9c4308b74d6d99c1a57ee7fa928feb8a7ed91983a',
+    'sk_6a803e9df57448c9e3e601bc8684be523d29d30f865c4cdf',
+    'sk_8e0026441bdd691728371703b86f6d11851766f4a14771ad',
+    'sk_0c9280f4cf423a329fee54888e3f6685bf5c438e49b2f1f2',
+    'sk_d76e2a0c24a62d7717ea9fb83cdb9d52117b18d43d7e19b7'
 ];
 // const VOICE_ID = 'TxGEqnHWrfWFTfGW9XjX';
 const VOICE_ID = 'EXAVITQu4vr4xnSDxMaL';
