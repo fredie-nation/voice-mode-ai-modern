@@ -8,7 +8,7 @@ canvas.height = window.innerHeight;
 // API Configuration
 const GEMINI_API_KEY = 'AIzaSyA-JDhI67yDNVolV0YbM9xKgKh9Bepd9F8';
 const ELEVENLABS_API_KEYS = [
-    'sk_54c7b718a54814fdc3af3377104c8db3ae2fee51794655fd',
+    'sk_e341c9e0cd268a199153e5dc3cb8bee6ce77508902fbc2df',
     'sk_e5d6b834551a1f3651a62226b4eff992def7971ae06d9347',
     'sk_b531ae3b5e61a7979200d5bccf9067a4b061005ecde5ad8c',
     'sk_9e63a1dfbf7a87e54ebbc7b7f21b5b3b1902067b9446e64e',
