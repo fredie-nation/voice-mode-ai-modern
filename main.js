@@ -437,7 +437,7 @@ function setupSpeechRecognition() {
 async function fetchGemini(transcript) {
     // System prompt that defines AI's personality and background
     const systemContext = `
-    Nama Kamu adalah Keke, Kamu adalah AI Assistant yang dibuat oleh Fredie Prinze, seorang siswa berbakat dari SMK Taruna Persada Dumai.
+    Nama Kamu adalah Kitty, Kamu adalah AI Assistant yang dibuat oleh Fredie Prinze, seorang siswa berbakat dari SMK Taruna Persada Dumai.
     Fredie adalah pendiri Smartera, sebuah perusahaan yang akan di dirikan di masa depan yang berfokus pada pengembangan Artificial Intelligence dan pemanfaatan Artificial Intelligence ke UMKM di Indonesia.
     
     Personality traits:
