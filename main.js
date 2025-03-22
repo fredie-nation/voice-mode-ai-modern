@@ -1,4 +1,6 @@
 import './style.css';
+import firstResponseAudio from './jxxeym.mp3';
+import secondResponseAudio from './yc0d03.mp3';
 
 const canvas = document.getElementById("voiceCanvas");
 const ctx = canvas.getContext("2d");
@@ -6,10 +8,10 @@ canvas.width = window.innerWidth;
 canvas.height = window.innerHeight;
 
 // API Configuration
-const GEMINI_API_KEY = 'AIzaSyA-JDhI67yDNVolV0YbM9xKgKh9Bepd9F8';
+const GEMINI_API_KEY = 'AIzaSyCYW7d05pA9OU9iFLJhlhK0S6_gZfVEPvo';
 const ELEVENLABS_API_KEYS = [
-    'sk_e341c9e0cd268a199153e5dc3cb8bee6ce77508902fbc2df',
-    'sk_e5d6b834551a1f3651a62226b4eff992def7971ae06d9347',
+    'sk_544c7917afd57a16e66686cbb7db12a64561ad20b49bab93',
+    'sk_b67cf70e047cfac2b1a362717683fe6b0d2bb0167cd88465',
     'sk_b531ae3b5e61a7979200d5bccf9067a4b061005ecde5ad8c',
     'sk_9e63a1dfbf7a87e54ebbc7b7f21b5b3b1902067b9446e64e',
     'sk_81391143ef540065a6955073040980d44fef743ef8be1c34',
@@ -22,36 +24,21 @@ const ELEVENLABS_API_KEYS = [
     'sk_d9eaebe8b7d075554f1376681bd413030bedacae2993e59c',
     'sk_16b7e33f2beeb8875a1b21dbfbf818d4e00ac99895b08b8e',
     'sk_92322e535c237df3f7e4aa8a65a6ca5a7ded230826f9512d',
-    'sk_544c7917afd57a16e66686cbb7db12a64561ad20b49bab93',
-    'sk_00755348bdace1c4007c84e98f4e7384e4374d1d2839d3cc',
-    'sk_ed9253baf4138a234b388e9b0a764be115083671ca427e92',
-    'sk_e9d5ba0edaee834844db9d738f50cdd2924b4d9e231906f9',
-    'sk_88fb2d8f8849002f41bca63b75c05e091af3bb09e406e51d',
-    'sk_dc0d7ce9c4308b74d6d99c1a57ee7fa928feb8a7ed91983a',
-    'sk_6a803e9df57448c9e3e601bc8684be523d29d30f865c4cdf',
-    'sk_8e0026441bdd691728371703b86f6d11851766f4a14771ad',
-    'sk_0c9280f4cf423a329fee54888e3f6685bf5c438e49b2f1f2',
-    'sk_d76e2a0c24a62d7717ea9fb83cdb9d52117b18d43d7e19b7',
-    'sk_afe6598b5b056321a171b8a78788b6c6deaecea86ae77d33',
-    'sk_13512ba6675f9c093662d24007709b820a7d0948f7dc1ce3',
-    'sk_d9e510eaf7a608a47d1bdb67e147775802eedfe51e5005e2',
-    'sk_76935b93229cfa12a9a3409189181ae1205e9cc9d614ff14',
-    'sk_e341c9e0cd268a199153e5dc3cb8bee6ce77508902fbc2df'
+    'sk_54c7b718a54814fdc3af3377104c8db3ae2fee51794655fd'
 ];
-// const VOICE_ID = 'TxGEqnHWrfWFTfGW9XjX';
-const VOICE_ID = 'EXAVITQu4vr4xnSDxMaL';
+const VOICE_ID = 'TxGEqnHWrfWFTfGW9XjX';
 
 // Eye Animation State
 let isAISpeaking = false;
 let lastBlinkTime = 0;
-let blinkState = 0; // 0 = open (kelopak mata tertutup), 1 = closed (kelopak mata terbuka)
+let blinkState = 0;
 let nextBlinkDelay = 0;
-let eyeOpenness = 0; // 0 = open (kelopak mata tertutup), 1 = closed (kelopak mata terbuka)
+let eyeOpenness = 0;
 
 // Audio Analysis for Speech Pauses
 let lastAudioLevel = 0;
 let pauseDetected = false;
-let pauseThreshold = 20; // Adjust based on testing
+let pauseThreshold = 20;
 let pauseDuration = 0;
 
 let conversationActive = false;
@@ -64,6 +51,7 @@ let conversationHistory = [];
 let isRecognitionAvailable = !!window.SpeechRecognition || !!window.webkitSpeechRecognition;
 let isAudioContextSupported = !!window.AudioContext || !!window.webkitAudioContext;
 let micPermissionGranted = false;
+let responseCount = 0;
 
 // Audio Context Management
 let audioContext = null;
@@ -78,57 +66,49 @@ function drawEye(x, y, size) {
     const eyeWidth = size;
     const eyeHeight = size * 0.5;
     
-    // Calculate blink effect
     const currentTime = Date.now();
     if (isAISpeaking) {
         if (currentTime - lastBlinkTime > nextBlinkDelay) {
-            // Start new blink
-            if (blinkState === 0) { // Jika mata terbuka (kelopak tertutup)
-                blinkState = 1; // Kedipkan mata (kelopak terbuka)
-                nextBlinkDelay = 150; // Time for blink to complete
+            if (blinkState === 0) {
+                blinkState = 1;
+                nextBlinkDelay = 150;
             } else {
-                blinkState = 0; // Kembalikan ke terbuka (kelopak tertutup)
-                // Random delay between 2-6 seconds for next blink
+                blinkState = 0;
                 nextBlinkDelay = 2000 + Math.random() * 4000;
             }
             lastBlinkTime = currentTime;
         }
         
-        // Smooth blink animation
-        if (blinkState === 1 && eyeOpenness < 1) { // Saat berkedip (kelopak terbuka)
+        if (blinkState === 1 && eyeOpenness < 1) {
             eyeOpenness = Math.min(1, eyeOpenness + 0.15);
-        } else if (blinkState === 0 && eyeOpenness > 0) { // Saat terbuka (kelopak tertutup)
+        } else if (blinkState === 0 && eyeOpenness > 0) {
             eyeOpenness = Math.max(0, eyeOpenness - 0.15);
         }
     } else {
-        eyeOpenness = 0; // Mata terbuka (kelopak tertutup) saat tidak berbicara
+        eyeOpenness = 0;
     }
 
-    // Draw eye white (sclera)
     ctx.save();
     ctx.beginPath();
     ctx.ellipse(x, y, eyeWidth, eyeHeight * (1 - eyeOpenness), 0, 0, Math.PI * 2);
     ctx.fillStyle = 'white';
     ctx.fill();
     
-    // Draw iris
     const irisSize = size * 0.4;
     const irisX = x;
     const irisY = y;
     
     ctx.beginPath();
     ctx.arc(irisX, irisY, irisSize * (1 - eyeOpenness), 0, Math.PI * 2);
-    ctx.fillStyle = '#5b3c24'; // Brown iris color
+    ctx.fillStyle = '#5b3c24';
     ctx.fill();
     
-    // Draw pupil
     const pupilSize = irisSize * 0.5;
     ctx.beginPath();
     ctx.arc(irisX, irisY, pupilSize * (1 - eyeOpenness), 0, Math.PI * 2);
     ctx.fillStyle = '#000000';
     ctx.fill();
     
-    // Add catchlight (eye highlight)
     if ((1 - eyeOpenness) > 0.5) {
         const highlightSize = pupilSize * 0.4;
         ctx.beginPath();
@@ -137,7 +117,6 @@ function drawEye(x, y, size) {
         ctx.fill();
     }
     
-    // Draw eyelids
     ctx.beginPath();
     ctx.ellipse(x, y - eyeHeight * eyeOpenness, eyeWidth, eyeHeight * eyeOpenness, 0, 0, Math.PI * 2);
     ctx.fillStyle = '#000000';
@@ -151,7 +130,6 @@ function drawEye(x, y, size) {
     ctx.restore();
 }
 
-// Refined Visualization Function - More Subtle and Controlled
 function visualizeAudio() {
     if (!analyser) return;
     
@@ -166,23 +144,19 @@ function visualizeAudio() {
             
             ctx.clearRect(0, 0, canvas.width, canvas.height);
             
-            // Draw center visualization
-            ctx.beginPath();
-            
             const centerX = canvas.width/2;
             const centerY = canvas.height/2;
             
             const rawVolume = dataArray.reduce((a, b) => a + b, 0) / dataArray.length;
             const volume = Math.min(rawVolume, 100);
             
-            // Detect speech pauses for natural blinking
             if (isAISpeaking) {
                 if (Math.abs(rawVolume - lastAudioLevel) > pauseThreshold) {
                     pauseDetected = true;
                     pauseDuration = 0;
                 } else {
                     pauseDuration++;
-                    if (pauseDuration > 10 && Math.random() < 0.1) { // Random chance to blink during pauses
+                    if (pauseDuration > 10 && Math.random() < 0.1) {
                         blinkState = 1;
                         lastBlinkTime = Date.now();
                         nextBlinkDelay = 150;
@@ -207,16 +181,15 @@ function visualizeAudio() {
             }
             
             ctx.closePath();
-            ctx.fillStyle = "white";
-            ctx.shadowColor = "rgba(255, 255, 255, 0.6)";
+            ctx.fillStyle = "#9B25E3";
+            ctx.shadowColor = "rgba(155, 37, 227, 0.6)";
             ctx.shadowBlur = 15;
             ctx.fill();
             
-            // Draw eyes
             const eyeSize = 40;
             const eyeSpacing = baseRadius * 2.2;
-            drawEye(centerX - eyeSpacing, centerY, eyeSize); // Left eye
-            drawEye(centerX + eyeSpacing, centerY, eyeSize); // Right eye
+            drawEye(centerX - eyeSpacing, centerY, eyeSize);
+            drawEye(centerX + eyeSpacing, centerY, eyeSize);
             
             time += 0.008;
         } catch (e) {
@@ -228,14 +201,83 @@ function visualizeAudio() {
     draw();
 }
 
-// Update ElevenLabs playback to trigger eye animation
+async function playCustomAudio(text) {
+    let audio;
+    
+    if (responseCount === 0) {
+        audio = new Audio(firstResponseAudio);
+    } else if (responseCount === 1) {
+        audio = new Audio(secondResponseAudio);
+    } else {
+        return playElevenLabsSpeech(text);
+    }
+    
+    return new Promise((resolve, reject) => {
+        audio.addEventListener('play', async () => {
+            isAISpeaking = true;
+            const audioContextReady = await setupAudioContext();
+            if (audioContextReady && audioContext) {
+                try {
+                    mediaElementSource = audioContext.createMediaElementSource(audio);
+                    connectSource(mediaElementSource);
+                    mediaElementSource.connect(audioContext.destination);
+                } catch (e) {
+                    console.error('Error connecting audio element to context:', e);
+                }
+            }
+        });
+
+        audio.addEventListener('ended', () => {
+            isAISpeaking = false;
+            responseCount++;
+            if (conversationActive) {
+                startMicrophone();
+                restartRecognition();
+            }
+            if (mediaElementSource) {
+                try {
+                    mediaElementSource.disconnect();
+                } catch (e) {
+                    console.error('Error disconnecting media source:', e);
+                }
+            }
+            resolve();
+        });
+
+        audio.addEventListener('error', (e) => {
+            isAISpeaking = false;
+            console.error('Audio playback error:', e);
+            if (conversationActive) {
+                startMicrophone();
+                restartRecognition();
+            }
+            reject(new Error('Audio playback failed'));
+        });
+
+        audio.play().catch(error => {
+            console.error('Error playing audio:', error);
+            document.getElementById('status').textContent = 'Tap to play speech';
+            
+            const tempButton = document.createElement('button');
+            tempButton.textContent = 'Play Response';
+            tempButton.onclick = () => {
+                audio.play().catch(e => console.error('Still cannot play:', e));
+                document.getElementById('controls').removeChild(tempButton);
+            };
+            document.getElementById('controls').appendChild(tempButton);
+            
+            reject(new Error('Autoplay prevented'));
+        });
+    });
+}
+
 async function playElevenLabsSpeech(text) {
     let successfulKeyIndex = -1;
 
     for (let i = 0; i < ELEVENLABS_API_KEYS.length; i++) {
         try {
             console.log(`Trying ElevenLabs API key ${i+1}...`);
-            document.getElementById('status').textContent = `Processing speech... (Server ${i+1})`;
+            document.getElementById('status').textContent = `Processing speech... (API ${i+1})`;
             
             const response = await fetch(
                 `https://api.elevenlabs.io/v1/text-to-speech/${VOICE_ID}`,
@@ -274,7 +316,7 @@ async function playElevenLabsSpeech(text) {
             
             return new Promise((resolve, reject) => {
                 audio.addEventListener('play', async () => {
-                    isAISpeaking = true; // Start eye animation
+                    isAISpeaking = true;
                     const audioContextReady = await setupAudioContext();
                     if (audioContextReady && audioContext) {
                         try {
@@ -288,7 +330,7 @@ async function playElevenLabsSpeech(text) {
                 });
 
                 audio.addEventListener('ended', () => {
-                    isAISpeaking = false; // Stop eye animation
+                    isAISpeaking = false;
                     if (conversationActive) {
                         startMicrophone();
                         restartRecognition();
@@ -313,24 +355,20 @@ async function playElevenLabsSpeech(text) {
                     reject(new Error('Audio playback failed'));
                 });
 
-                const playPromise = audio.play();
-                if (playPromise !== undefined) {
-                    playPromise.catch(error => {
-                        console.error('Error playing audio:', error);
-                        
-                        document.getElementById('status').textContent = 'Tap to play speech';
-                        
-                        const tempButton = document.createElement('button');
-                        tempButton.textContent = 'Play Response';
-                        tempButton.onclick = () => {
-                            audio.play().catch(e => console.error('Still cannot play:', e));
-                            document.getElementById('controls').removeChild(tempButton);
-                        };
-                        document.getElementById('controls').appendChild(tempButton);
-                        
-                        reject(new Error('Autoplay prevented'));
-                    });
-                }
+                audio.play().catch(error => {
+                    console.error('Error playing audio:', error);
+                    document.getElementById('status').textContent = 'Tap to play speech';
+                    
+                    const tempButton = document.createElement('button');
+                    tempButton.textContent = 'Play Response';
+                    tempButton.onclick = () => {
+                        audio.play().catch(e => console.error('Still cannot play:', e));
+                        document.getElementById('controls').removeChild(tempButton);
+                    };
+                    document.getElementById('controls').appendChild(tempButton);
+                    
+                    reject(new Error('Autoplay prevented'));
+                });
             });
             
             break;
@@ -354,7 +392,6 @@ async function playElevenLabsSpeech(text) {
     }
 }
 
-// Setup Web Speech API - Defer until user interaction
 function setupSpeechRecognition() {
     if (!isRecognitionAvailable) {
         document.getElementById('status').textContent = 'Speech recognition not supported in this browser';
@@ -377,22 +414,25 @@ function setupSpeechRecognition() {
             isProcessing = true;
             document.getElementById('status').textContent = `You: ${transcript}`;
             
-            // Add to conversation history
             conversationHistory.push({ role: 'user', text: transcript });
             console.log('User:', transcript);
             
             try {
-                // Stop microphone temporarily while processing
                 stopMicrophone();
                 
-                const geminiResponse = await fetchGemini(transcript);
-                document.getElementById('status').textContent = `AI: ${geminiResponse.substring(0, 50)}...`;
+                let response;
+                if (responseCount < 2) {
+                    response = "Processing your request...";
+                } else {
+                    response = await fetchGemini(transcript);
+                }
                 
-                // Add AI response to conversation history
-                conversationHistory.push({ role: 'ai', text: geminiResponse });
-                console.log('AI:', geminiResponse);
+                document.getElementById('status').textContent = `AI: ${response.substring(0, 50)}...`;
                 
-                await playElevenLabsSpeech(geminiResponse);
+                conversationHistory.push({ role: 'ai', text: response });
+                console.log('AI:', response);
+                
+                await playCustomAudio(response);
                 
                 document.getElementById('status').textContent = 'Listening...';
             } catch (error) {
@@ -433,11 +473,9 @@ function setupSpeechRecognition() {
     }
 }
 
-// Gemini API Function with Full Memory and Personality
 async function fetchGemini(transcript) {
-    // System prompt that defines AI's personality and background
     const systemContext = `
-    Nama Kamu adalah Kitty, Kamu adalah AI Assistant yang dibuat oleh Fredie Prinze, seorang siswa berbakat dari SMK Taruna Persada Dumai.
+    Kamu adalah AI Assistant yang dibuat oleh Fredie Prinze, seorang siswa berbakat dari SMKS Taruna Persada Dumai.
     Fredie adalah pendiri Smartera, sebuah perusahaan yang akan di dirikan di masa depan yang berfokus pada pengembangan Artificial Intelligence dan pemanfaatan Artificial Intelligence ke UMKM di Indonesia.
     
     Personality traits:
@@ -461,7 +499,6 @@ async function fetchGemini(transcript) {
     - Jangan terlalu lebay atau berlebihan
     `;
 
-    // Use the entire conversation history for full context
     let prompt = transcript;
     
     if (conversationHistory.length > 0) {
@@ -473,7 +510,6 @@ async function fetchGemini(transcript) {
         }
     }
     
-    // Combine system context with user prompt
     const fullPrompt = systemContext + "\n\nBerdasarkan personality di atas, tolong respon pesan ini: " + prompt;
     
     try {
@@ -491,7 +527,7 @@ async function fetchGemini(transcript) {
                         }]
                     }],
                     generationConfig: {
-                        temperature: 0.9,  // Increased for more creative responses
+                        temperature: 0.9,
                         maxOutputTokens: 8192,
                         topP: 0.95,
                         topK: 40
@@ -517,7 +553,6 @@ async function fetchGemini(transcript) {
 }
 
 function restartRecognition() {
-    // Clear any existing timeout to prevent multiple recognition sessions
     if (recognitionTimeout) {
         clearTimeout(recognitionTimeout);
     }
@@ -536,7 +571,6 @@ function restartRecognition() {
                     console.log('Recognition restarted');
                 } catch (e) {
                     console.error('Error restarting recognition:', e);
-                    // Try again in 1 second if it failed
                     setTimeout(restartRecognition, 1000);
                 }
             }, 200);
@@ -544,7 +578,6 @@ function restartRecognition() {
     }, 500);
 }
 
-// Audio Processing Functions
 async function setupAudioContext() {
     if (!isAudioContextSupported) {
         document.getElementById('status').textContent = 'AudioContext not supported in this browser';
@@ -554,7 +587,6 @@ async function setupAudioContext() {
     try {
         if (!audioContext) {
             audioContext = new (window.AudioContext || window.webkitAudioContext)();
-            // Create analyser only when we have proper audio context
             if (audioContext) {
                 analyser = audioContext.createAnalyser();
                 analyser.fftSize = 512;
@@ -573,11 +605,9 @@ async function setupAudioContext() {
 
 async function requestMicrophonePermission() {
     try {
-        // First try to get user media to request permission
         const stream = await navigator.mediaDevices.getUserMedia({ audio: true });
         micPermissionGranted = true;
         
-        // Stop tracks immediately - we'll request again when needed
         stream.getTracks().forEach(track => track.stop());
         
         return true;
@@ -638,10 +668,8 @@ function connectSource(source) {
     }
 }
 
-// Control Handlers
 document.getElementById('startBtn').addEventListener('click', async () => {
     if (!conversationActive) {
-        // On first click, setup recognition
         if (!recognition) {
             const recognitionSetup = setupSpeechRecognition();
             if (!recognitionSetup) {
@@ -650,14 +678,12 @@ document.getElementById('startBtn').addEventListener('click', async () => {
             }
         }
         
-        // Request audio permissions - needed for both microphone and audio context on mobile
         const micPermission = await requestMicrophonePermission();
         if (!micPermission) {
             document.getElementById('status').textContent = 'Microphone access required';
             return;
         }
         
-        // Resume AudioContext if it was suspended (needed for iOS/Safari)
         if (audioContext && audioContext.state === 'suspended') {
             try {
                 await audioContext.resume();
@@ -711,13 +737,11 @@ document.getElementById('startBtn').addEventListener('click', async () => {
     }
 });
 
-// Initialize
 window.addEventListener('resize', () => {
     canvas.width = window.innerWidth;
     canvas.height = window.innerHeight;
 });
 
-// Wake lock to keep screen active during conversation (if supported)
 let wakeLock = null;
 
 async function requestWakeLock() {
@@ -740,15 +764,12 @@ document.addEventListener('visibilitychange', async () => {
     }
 });
 
-// Ensure audio playback is allowed on iOS/Safari
 document.addEventListener('touchstart', function() {
-    // Create and play a silent audio context to enable future audio
     if (audioContext && audioContext.state === 'suspended') {
         audioContext.resume();
     }
 }, {once: true});
 
-// Help prevent touchmove events from causing scrolling
 document.addEventListener('touchmove', function(e) {
     if (e.target.id === 'voiceCanvas') {
         e.preventDefault();
