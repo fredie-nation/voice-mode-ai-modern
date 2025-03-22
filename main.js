@@ -1,6 +1,6 @@
 import './style.css';
-import firstResponseAudio from './jxxeym.mp3';
-import secondResponseAudio from './yc0d03.mp3';
+import firstResponseAudio from './1.mp3';
+import secondResponseAudio from './2.mp3';
 
 const canvas = document.getElementById("voiceCanvas");
 const ctx = canvas.getContext("2d");
